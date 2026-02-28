@@ -1,16 +1,26 @@
 package org.example.CountryCache.domain;
+
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
-import lombok.Data;
 
 @Entity
 @Table(schema = "world", name = "country")
-@Data
+@Getter @Setter
+@ToString(exclude = {"city", "languages"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Country {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Integer id;
 
     private String code;
@@ -21,7 +31,7 @@ public class Country {
     private String name;
 
     @Column(name = "continent")
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.ORDINAL) // можно заменить на STRING, если в БД enum текстовый
     private Continent continent;
 
     private String region;
@@ -38,10 +48,10 @@ public class Country {
     private BigDecimal lifeExpectancy;
 
     @Column(name = "gnp")
-    private BigDecimal GNP;
+    private BigDecimal gnp;
 
     @Column(name = "gnpo_id")
-    private BigDecimal GNPOId;
+    private BigDecimal gnpoId;
 
     @Column(name = "local_name")
     private String localName;
@@ -52,15 +62,11 @@ public class Country {
     @Column(name = "head_of_state")
     private String headOfState;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "capital")
     private City city;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "country_id")
-    private Set<CountryLanguage> languages;
-
-
-    //Getters and Setters omitted
-
+    // ВАЖНО: mappedBy, а не JoinColumn здесь!
+    @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
+    private Set<CountryLanguage> languages = new HashSet<>();
 }

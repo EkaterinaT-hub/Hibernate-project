@@ -1,19 +1,28 @@
 package org.example.CountryCache.domain;
+
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
+
 import java.math.BigDecimal;
 
 @Entity
 @Table(schema = "world", name = "country_language")
-@Data
+@Getter @Setter
+@ToString(exclude = {"country"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CountryLanguage {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     private Country country;
 
@@ -21,10 +30,7 @@ public class CountryLanguage {
 
     @Column(name = "is_official", columnDefinition = "BIT")
     @Type(type = "org.hibernate.type.NumericBooleanType")
-    private Boolean isOfficial;
+    private Boolean official;
 
     private BigDecimal percentage;
-
-
-    //Getters and Setters omitted
 }
