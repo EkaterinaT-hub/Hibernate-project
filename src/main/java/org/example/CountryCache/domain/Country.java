@@ -31,7 +31,7 @@ public class Country {
     private String name;
 
     @Column(name = "continent")
-    @Enumerated(EnumType.ORDINAL) // можно заменить на STRING, если в БД enum текстовый
+    @Enumerated(EnumType.ORDINAL)
     private Continent continent;
 
     private String region;
@@ -66,7 +66,6 @@ public class Country {
     @JoinColumn(name = "capital")
     private City city;
 
-    // ВАЖНО: mappedBy, а не JoinColumn здесь!
     @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
     private Set<CountryLanguage> languages = new HashSet<>();
 }
