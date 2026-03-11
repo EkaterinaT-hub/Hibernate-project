@@ -37,13 +37,13 @@ public class Main {
     public static void main(String[] args) {
         Main app = new Main();
 
-        // 1) Заливаем данные из MySQL -> Redis (это НЕ часть benchmark)
+
         app.preloadRedisFromMysql();
 
-        // 2) Одни и те же id (используй существующие в БД)
+
         List<Integer> ids = List.of(3, 2545, 123, 4, 189, 89, 3458, 1189, 10, 102);
 
-        // 3) Сравнение batch vs batch: Redis(MGET) vs MySQL(IN)
+
         app.benchmarkBatch(ids, 10, 100);
 
         app.shutdown();
@@ -92,7 +92,7 @@ public class Main {
         try (StatefulRedisConnection<String, String> redisConn = redisClient.connect()) {
             RedisStringCommands<String, String> redis = redisConn.sync();
 
-            // прогрев (чтобы первый запуск не портил картину)
+            // прогрев
             for (int i = 0; i < warmupRuns; i++) {
                 readFromRedisBatch(redisKeys, redis);
                 readFromMysqlBatch(ids);
@@ -214,10 +214,6 @@ public class Main {
     private SessionFactory prepareRelationalDb() {
         Properties properties = new Properties();
         properties.put(Environment.DIALECT, "org.hibernate.dialect.MySQL8Dialect");
-
-        // Для более честного замера лучше обычный драйвер (p6spy добавляет оверхед).
-        // properties.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
-        // properties.put(Environment.URL, "jdbc:mysql://localhost:3306/world");
 
         properties.put(Environment.DRIVER, "com.p6spy.engine.spy.P6SpyDriver");
         properties.put(Environment.URL, "jdbc:p6spy:mysql://localhost:3306/world");

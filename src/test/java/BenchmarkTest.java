@@ -42,7 +42,7 @@ public class BenchmarkTest {
     private RedisClient redisClient;
     private ObjectMapper objectMapper;
 
-    // используй существующие id из world.city
+
     private final List<Integer> testIds = List.of(3, 2545, 123, 4, 189, 89, 3458, 1189, 10, 102);
 
     public static void main(String[] args) {
